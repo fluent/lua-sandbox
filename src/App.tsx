@@ -176,50 +176,61 @@ function App() {
 
   return (
     <div>
-      <h2>Input json (one JSON expression per line)</h2>
-        <input type="file" onChange={(e) => {
-
-          if (!e.target.files || !e.target.files[0]) {
-            console.error('failed to read file', e)
-            return
-          }
-
-          const file = e.target.files[0]
-          const fileReader = new FileReader()
-
-          fileReader.onloadend = (e) => {
-            const { result } = fileReader
-            if (typeof result != "string") {
-              console.error('failed to read file', e)
-              return
-            }
-            setFileInput(result)
-          }
-
-          fileReader.readAsText(file)
-        }} />
+      <div className="code-editor">
+        <h2>Input json (one JSON expression per line)</h2>
       <CodeMirror
         value={input}
-        height="200px"
+        height="500px"
+        width="550px"
         extensions={[json()]}
         onChange={setInput}
       />
+    </div>
 
+    <div className="code-editor">
       <h2>Lua filter</h2>
       <CodeMirror
         value={filter}
-        height="200px"
+        height="500px"
+        width="550px"
         extensions={[StreamLanguage.define(lua)]}
         onChange={setFilter}
       />
+    </div>
 
+    <div className="code-editor">
       <h2>Output json</h2>
       <CodeMirror
         value={out}
-        height="200px"
+        height="500px"
+        width="550px"
         readOnly={true}
         extensions={[json()]}
       />
+    </div>
+    <div className="clear" />
+    <div className="control-buttons">
+      <input type="file" onChange={(e) => {
+
+        if (!e.target.files || !e.target.files[0]) {
+          console.error('failed to read file', e)
+          return
+        }
+
+        const file = e.target.files[0]
+        const fileReader = new FileReader()
+
+        fileReader.onloadend = (e) => {
+          const { result } = fileReader
+          if (typeof result != "string") {
+            console.error('failed to read file', e)
+            return
+          }
+          setFileInput(result)
+        }
+
+        fileReader.readAsText(file)
+      }} />
       <button
         onClick={()=>{
           localStorage.clear()
@@ -230,6 +241,7 @@ function App() {
         Reset
       </button>
     </div>
+  </div>
 );
 }
 
