@@ -7,68 +7,14 @@ import { json } from '@codemirror/lang-json';
 import { lua } from '@codemirror/legacy-modes/mode/lua';
 import _ from 'underscore'
 
-const fengari = require("fengari-web");
+import { runFilter as runFilterFengari } from './fengari_runner'
+import { runFilter as runFilterCloud } from './cloud_runner'
+
+const runFilter = process.env.REACT_APP_CLOUD_RUNNER_URL ?
+  runFilterCloud :
+  runFilterFengari
 
 const storageKey = "flb-input-filter"
-
-const luaSupport = `
-return function(_, tag, ts, obj)
-  local js = require "js"
-
-  local function _is_array(t)
-    return t[1] ~= nil
-  end
-
-  local function _to_lua(o)
-    local t = js.typeof(o)
-    local rv
-    if t == 'undefined' or o == js.null then
-      rv = nil
-    elseif t == 'number' or t == 'boolean' or t == 'string' then
-      rv = o
-    elseif t == 'object' then
-      rv = {}
-      if js.instanceof(o, js.global.Array) then
-        for item in js.of(o) do
-          rv[#rv + 1] = _to_lua(item)
-        end
-      else
-        for key in js.of(js.global.Object:keys(o)) do
-          rv[key] = _to_lua(o[key])
-        end
-      end
-    else
-      error("Unsupported type")
-    end
-    return rv
-  end
-
-  local function _to_js(o)
-    local t = type(o)
-
-    if t ~= 'table' then
-      return o
-    end
-
-    local rv
-    if _is_array(o) then
-      rv = js.new(js.global.Array)
-      for _, v in ipairs(o) do
-        rv:push(_to_js(v))
-      end
-    else
-      rv = js.new(js.global.Object)
-      for k, v in pairs(o) do
-        rv[k] = _to_js(v)
-      end
-    end
-    return rv
-  end
-
-  local code, ts, record = cb_filter(_to_lua(tag), _to_lua(ts), _to_lua(obj))
-  return _to_js({code, ts, record})
-end
-`;
 
 const initialInput = `{"log": "line 1"}
 {"log": "line 2"}
@@ -102,13 +48,14 @@ const initialFilter = `function cb_filter(tag, ts, record)
   return 1, ts, record
 end`
 
-function run(input: string, filter: string, setOut: Function) {
+let fetching = false
+
+async function run(input: string, filter: string, setOut: Function) {
+  if (fetching) {
+    return
+  }
+  const events = []
   const jsonExpressions = input.split('\n')
-  const filterScript = filter + '\n' + luaSupport
-  const luaFn = fengari.load(filterScript)()
-  const output = []
-  const ts = 0
-  const tag = "my-tag"
   for (const jsonStr of jsonExpressions) {
     if (!jsonStr.trim()) {
       continue
@@ -116,17 +63,49 @@ function run(input: string, filter: string, setOut: Function) {
     let obj: any
     try {
       obj = JSON.parse(jsonStr)
+      events.push(obj)
     } catch (err) {
       console.error(err)
       continue
     }
-    const [code, newTs, newObj] = luaFn(tag, ts, obj)
+  }
+
+  let result: any[]
+  try {
+    fetching = true
+    result = await runFilter(events, filter)
+  } catch (err) {
+    console.error(err)
+    return
+  } finally {
+    fetching = false
+  }
+
+  if (events.length !== result.length) {
+    console.error('Result array has different length than events array', result, events)
+    return
+  }
+
+  const output = []
+  const ts = 0
+
+  for (const [i, res] of result.entries()) {
+    if (res.error) {
+      console.error(`Error processing event ${i}:`, res.error)
+      continue
+    }
+    if (!res.result?.length) {
+      console.error(`Invalid result for event ${i}:`, res.result)
+      continue
+    }
+
+    const [code, newTs, newObj] = res.result
     let resultTs
     let resultObj
     switch (code) {
       case 0:
         resultTs = ts
-        resultObj = obj
+        resultObj = events[i]
       break
       case 1:
         resultTs = newTs
@@ -137,6 +116,7 @@ function run(input: string, filter: string, setOut: Function) {
         resultObj = newObj
       break
       default:
+        /* drop record */
         continue
     }
 
@@ -149,6 +129,7 @@ function run(input: string, filter: string, setOut: Function) {
       output.push(JSON.stringify([resultTs, resultObj]))
     }
   }
+
   localStorage.setItem(storageKey, JSON.stringify({ input, filter }))
   setOut(output.join('\n'))
 }
