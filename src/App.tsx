@@ -10,7 +10,7 @@ import _ from 'underscore'
 import { runFilter as runFilterFengari } from './fengari_runner'
 import { runFilter as runFilterCloud } from './cloud_runner'
 
-const runFilter = process.env.REACT_APP_CLOUD_RUNNER_URL ?
+const runFilter = process.env.REACT_APP_CLOUD_RUNNER_URL || localStorage.getItem('cloud-runner-url') ?
   runFilterCloud :
   runFilterFengari
 

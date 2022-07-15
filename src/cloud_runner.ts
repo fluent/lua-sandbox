@@ -1,5 +1,6 @@
-const URL = process.env.REACT_APP_CLOUD_RUNNER_URL ?
-  process.env.REACT_APP_CLOUD_RUNNER_URL :
+const URL =
+  localStorage.getItem('cloud-runner-url') ||
+  process.env.REACT_APP_CLOUD_RUNNER_URL ||
   'http://localhost:5555/jsonrpc'
 
 export async function runFilter(events: any[], filter: string) {
