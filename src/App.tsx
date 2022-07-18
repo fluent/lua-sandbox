@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react'
-import './App.css';
 
 import CodeMirror from '@uiw/react-codemirror';
 import { StreamLanguage } from '@codemirror/language';
@@ -176,67 +175,7 @@ function App() {
 
   return (
     <div>
-      <div id="code-editors">
-        <div className="code-editor">
-          <h2>Input events</h2>
-          <CodeMirror
-            value={input}
-            height="500px"
-            width="300px"
-            extensions={[json()]}
-            onChange={setInput}
-          />
-        </div>
-
-        <div className="code-editor">
-          <h2>Lua filter</h2>
-          <CodeMirror
-            value={filter}
-            height="500px"
-            width="550px"
-            extensions={[StreamLanguage.define(lua)]}
-            onChange={setFilter}
-          />
-        </div>
-
-        <div className="code-editor">
-          <h2>Output events</h2>
-          <CodeMirror
-            value={out}
-            height="500px"
-            width="300px"
-            readOnly={true}
-            extensions={[json()]}
-          />
-        </div>
-      </div>
-      <div className="clear" />
-      <div id="control-buttons">
-        <label htmlFor="events-input">
-          <h4>Select log file</h4>
-        </label>
-
-        <input style={{display: 'none'}} id="events-input" type="file" onChange={(e) => {
-
-          if (!e.target.files || !e.target.files[0]) {
-            console.error('failed to read file', e)
-            return
-          }
-
-          const file = e.target.files[0]
-          const fileReader = new FileReader()
-
-          fileReader.onloadend = (e) => {
-            const { result } = fileReader
-            if (typeof result != "string") {
-              console.error('failed to read file', e)
-              return
-            }
-            setFileInput(result)
-          }
-
-          fileReader.readAsText(file)
-        }} />
+      <div id="control-bar">
         <button
           onClick={()=>{
             localStorage.clear()
@@ -246,6 +185,88 @@ function App() {
           }}>
           Reset
         </button>
+      </div>
+      <div id="code-editors">
+        <div id="input-events" className="code-editor">
+          <div className="code-editor-title upload-file">
+            <label htmlFor="events-input"><h2>Input events</h2></label>
+            <input id="events-input" type="file" onChange={(e) => {
+
+              if (!e.target.files || !e.target.files[0]) {
+                console.error('failed to read file', e)
+                return
+              }
+
+              const file = e.target.files[0]
+              const fileReader = new FileReader()
+
+              fileReader.onloadend = (e) => {
+                const { result } = fileReader
+                if (typeof result != "string") {
+                  console.error('failed to read file', e)
+                  return
+                }
+                setFileInput(result)
+              }
+
+              fileReader.readAsText(file)
+            }} />
+          </div>
+          <CodeMirror
+            className="code-editor-cm"
+            value={input}
+            height="100%"
+            extensions={[json()]}
+            onChange={setInput}
+          />
+        </div>
+
+        <div id="lua-filter" className="code-editor">
+          <div className="code-editor-title upload-file">
+            <label htmlFor="filter-input"><h2>Lua filter</h2></label>
+            <input id="filter-input" type="file" onChange={(e) => {
+
+              if (!e.target.files || !e.target.files[0]) {
+                console.error('failed to read file', e)
+                return
+              }
+
+              const file = e.target.files[0]
+              const fileReader = new FileReader()
+
+              fileReader.onloadend = (e) => {
+                const { result } = fileReader
+                if (typeof result != "string") {
+                  console.error('failed to read file', e)
+                  return
+                }
+                setFilter(result)
+              }
+
+              fileReader.readAsText(file)
+            }} />
+          </div>
+          <CodeMirror
+            className="code-editor-cm"
+            value={filter}
+            height="100%"
+            extensions={[StreamLanguage.define(lua)]}
+            onChange={setFilter}
+          />
+        </div>
+
+        <div id="output-events" className="code-editor">
+          <div className="code-editor-title">
+            <h2>Output events</h2>
+          </div>
+          <CodeMirror
+            className="code-editor-cm"
+            value={out}
+            height="100%"
+            readOnly={true}
+            extensions={[json()]}
+          />
+        </div>
       </div>
     </div>
 );

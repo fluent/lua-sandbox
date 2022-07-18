@@ -12,56 +12,65 @@ code {
     monospace;
 }
 
-#code-editors {
-  border: 1px gray solid;
-  border-right: none;
-  float: left;
+.code-editor {
+  min-width: 200px;
+  margin-top: 15px;
+  height: 350px;
+  /* min-height: 300px; */
+  /* max-height: 400px; */
 }
 
-#code-editors > div {
-  float: left;
-  border-right: 1px gray solid;
-  /* border: 1px black solid; */
+.code-editor .code-editor-cm {
+  height: 100%;
+  border: 1px solid gray;
 }
 
-#code-editors > div .cm-editor {
-  border-top: 1px gray solid;
+.code-editor .code-editor-title h2 {
+  border: 1px solid gray;
+  border-bottom: none;
 }
 
-#code-editors > div > h2 {
+#lua-filter .code-editor-cm {
+  border-left: none !important;
+  border-right: none !important;
+}
+
+#lua-filter .code-editor-title h2 {
+  border-left: none !important;
+  border-right: none !important;
+}
+
+#code-editors, #control-bar {
+  display: flex;
+  margin: 25px;
+}
+
+#control-bar {
+  justify-content: space-around;
+}
+
+#input-events, #output-events {
+  width: 25%;
+}
+
+#lua-filter {
+  width: 50%;
+}
+
+.code-editor h2 {
   color: #444444;
   text-align: center;
-  margin-bottom: 20px;
+  padding-block-start: 0.83em;
+  padding-block-end: 0.83em;
+  margin: 0;
 }
 
-/* #code-editors > div:first-child > h2 { */
-/*   color: red; */
-/* } */
-
-.clear {
-  clear: both;
+.upload-file input[type=file] {
+  display: none;
 }
 
-#control-buttons input,button,label {
-  margin-top: 10px;
-  /* display: block; */
-}
-
-#control-buttons input,label {
-  margin-top: 20px;
-  /* display: block; */
-}
-
-#control-buttons label {
-  color: #333333;
-}
-
-#control-buttons label:hover {
+.upload-file label:hover {
   color: gray;
   text-decoration: underline;
   cursor: pointer;
-}
-
-#code-editors, #control-buttons {
-  margin-left: 15px;
 }
