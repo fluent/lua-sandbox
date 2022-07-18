@@ -12,16 +12,56 @@ code {
     monospace;
 }
 
-.code-editor {
+#code-editors {
+  border: 1px gray solid;
+  border-right: none;
   float: left;
-  margin-left: 15px;
 }
+
+#code-editors > div {
+  float: left;
+  border-right: 1px gray solid;
+  /* border: 1px black solid; */
+}
+
+#code-editors > div .cm-editor {
+  border-top: 1px gray solid;
+}
+
+#code-editors > div > h2 {
+  color: #444444;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* #code-editors > div:first-child > h2 { */
+/*   color: red; */
+/* } */
 
 .clear {
   clear: both;
 }
 
-.control-buttons input,button {
+#control-buttons input,button,label {
   margin-top: 10px;
-  display: block;
+  /* display: block; */
+}
+
+#control-buttons input,label {
+  margin-top: 20px;
+  /* display: block; */
+}
+
+#control-buttons label {
+  color: #333333;
+}
+
+#control-buttons label:hover {
+  color: gray;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+#code-editors, #control-buttons {
+  margin-left: 15px;
 }

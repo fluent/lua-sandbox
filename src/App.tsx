@@ -176,72 +176,78 @@ function App() {
 
   return (
     <div>
-      <div className="code-editor">
-        <h2>Input json (one JSON expression per line)</h2>
-      <CodeMirror
-        value={input}
-        height="500px"
-        width="550px"
-        extensions={[json()]}
-        onChange={setInput}
-      />
-    </div>
+      <div id="code-editors">
+        <div className="code-editor">
+          <h2>Input events</h2>
+          <CodeMirror
+            value={input}
+            height="500px"
+            width="300px"
+            extensions={[json()]}
+            onChange={setInput}
+          />
+        </div>
 
-    <div className="code-editor">
-      <h2>Lua filter</h2>
-      <CodeMirror
-        value={filter}
-        height="500px"
-        width="550px"
-        extensions={[StreamLanguage.define(lua)]}
-        onChange={setFilter}
-      />
-    </div>
+        <div className="code-editor">
+          <h2>Lua filter</h2>
+          <CodeMirror
+            value={filter}
+            height="500px"
+            width="550px"
+            extensions={[StreamLanguage.define(lua)]}
+            onChange={setFilter}
+          />
+        </div>
 
-    <div className="code-editor">
-      <h2>Output json</h2>
-      <CodeMirror
-        value={out}
-        height="500px"
-        width="550px"
-        readOnly={true}
-        extensions={[json()]}
-      />
-    </div>
-    <div className="clear" />
-    <div className="control-buttons">
-      <input type="file" onChange={(e) => {
+        <div className="code-editor">
+          <h2>Output events</h2>
+          <CodeMirror
+            value={out}
+            height="500px"
+            width="300px"
+            readOnly={true}
+            extensions={[json()]}
+          />
+        </div>
+      </div>
+      <div className="clear" />
+      <div id="control-buttons">
+        <label htmlFor="events-input">
+          <h4>Select log file</h4>
+        </label>
 
-        if (!e.target.files || !e.target.files[0]) {
-          console.error('failed to read file', e)
-          return
-        }
+        <input style={{display: 'none'}} id="events-input" type="file" onChange={(e) => {
 
-        const file = e.target.files[0]
-        const fileReader = new FileReader()
-
-        fileReader.onloadend = (e) => {
-          const { result } = fileReader
-          if (typeof result != "string") {
+          if (!e.target.files || !e.target.files[0]) {
             console.error('failed to read file', e)
             return
           }
-          setFileInput(result)
-        }
 
-        fileReader.readAsText(file)
-      }} />
-      <button
-        onClick={()=>{
-          localStorage.clear()
-          setTimeout(() =>  {
-            window.location.reload()
-          }, 200)
-        }}>
-        Reset
-      </button>
+          const file = e.target.files[0]
+          const fileReader = new FileReader()
+
+          fileReader.onloadend = (e) => {
+            const { result } = fileReader
+            if (typeof result != "string") {
+              console.error('failed to read file', e)
+              return
+            }
+            setFileInput(result)
+          }
+
+          fileReader.readAsText(file)
+        }} />
+        <button
+          onClick={()=>{
+            localStorage.clear()
+            setTimeout(() =>  {
+              window.location.reload()
+            }, 200)
+          }}>
+          Reset
+        </button>
+      </div>
     </div>
-  </div>
 );
 }
 
