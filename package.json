@@ -17,6 +17,7 @@
     "@types/underscore": "^1.11.4",
     "@uiw/react-codemirror": "^4.7.0",
     "fengari-web": "^0.1.4",
+    "luamin": "^1.0.4",
     "normalize.css": "^8.0.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
