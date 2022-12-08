@@ -172,7 +172,9 @@ function App() {
 
   function setFileInput(data: string) {
     const input = []
-    for (const line of data.split('\n')) {
+    const lines = data.split('\n')
+    for (const [index, line] of lines.entries()) {
+      if (index == lines.length - 1 && line.trim() == '') break;
       input.push(JSON.stringify({log: line}))
     }
     setInput(input.join('\n'))
