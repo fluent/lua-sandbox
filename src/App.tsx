@@ -130,7 +130,11 @@ async function run(input: string, filter: string, setOut: Function) {
     }
   }
 
-  localStorage.setItem(storageKey, JSON.stringify({ input, filter }))
+  try {
+    localStorage.setItem(storageKey, JSON.stringify({ input, filter }))
+  } catch (err) {
+    console.warn('failed to set local storage', err)
+  }
   setOut(output.join('\n'))
 }
 
