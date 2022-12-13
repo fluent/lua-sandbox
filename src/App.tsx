@@ -63,7 +63,20 @@ async function run(input: string, filter: string, setOut: Function) {
     let obj: any
     try {
       obj = JSON.parse(jsonStr)
-      events.push(obj)
+      if (!Array.isArray(obj)) {
+        obj = [obj];
+      }
+      if (obj.length > 3) {
+        console.warn("Invalid event array:", obj);
+        continue
+      }
+      // last object is the record
+      const record = obj[obj.length - 1];
+      // second last object is the timestamp
+      const timestamp = obj.length > 1 ? obj[obj.length - 2] : 0;
+      // second last object is the timestamp
+      const tag = obj.length > 2 ? obj[obj.length - 3] : 'my-tag';
+      events.push({ tag, timestamp, record })
     } catch (err) {
       console.error(err)
       continue

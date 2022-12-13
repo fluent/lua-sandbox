@@ -63,11 +63,9 @@ export async function runFilter(events: any[], filter: string) {
   const filterScript = filter + '\n' + luaSupport
   const luaFn = fengari.load(filterScript)()
   const result = []
-  const ts = 0
-  const tag = "my-tag"
   for (const [i, event] of events.entries()) {
     try {
-      const [code, newTs, newObj] = luaFn(tag, ts, event)
+      const [code, newTs, newObj] = luaFn(event.tag, event.timestamp, event.record)
       result.push({result: [code, newTs, newObj]})
     } catch (err) {
       result.push({error: `error processing event ${i + 1}: ${err}`})
