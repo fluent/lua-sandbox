@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: 16.x
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - run: npm ci
       - run: npm run build
       - run: rm -rfv node_modules static *.txt *.json *.png *.html *.ico *.json *.js *.css
