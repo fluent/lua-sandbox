@@ -2,7 +2,7 @@
   "name": "lua-fluent-bit-online-playground",
   "version": "0.1.0",
   "private": true,
-  "homepage": "/calyptia-sandbox/",
+  "homepage": "/lua-sandbox/",
   "dependencies": {
     "@codemirror/lang-javascript": "^0.20.0",
     "@codemirror/lang-json": "^0.20.0",
